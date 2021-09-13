@@ -42,6 +42,12 @@ func ResourceMachineCreate(ctx context.Context, d *terraform_schema.ResourceData
 	jobName := d.Id()
 	jobNamespace := namespace
 
+	// Define the metadata
+	jobMetadata := map[string]string{}
+	for key, value := range d.Get("metadata").(map[string]interface{}) {
+		jobMetadata[key] = value.(string)
+	}
+
 	// Define the accelerator settings (i.e. GPU type, model, ...)
 	jobNodeSelector := map[string]string{}
 	jobAccelerator := instanceType["accelerator"]["model"]
@@ -88,8 +94,10 @@ func ResourceMachineCreate(ctx context.Context, d *terraform_schema.ResourceData
 
 	job := kubernetes_batch.Job{
 		ObjectMeta: kubernetes_meta.ObjectMeta{
-			Name:      jobName,
-			Namespace: jobNamespace,
+			Name:        jobName,
+			Namespace:   jobNamespace,
+			Labels:      jobMetadata,
+			Annotations: jobMetadata,
 		},
 		Spec: kubernetes_batch.JobSpec{
 			BackoffLimit:            &jobBackoffLimit,
