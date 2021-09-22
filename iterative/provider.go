@@ -9,6 +9,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"iterative_machine":    resourceMachine(),
 			"iterative_cml_runner": resourceRunner(),
+			"iterative_dvc_run":    resourceDVCRun(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{},
 	}
