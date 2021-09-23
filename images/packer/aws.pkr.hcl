@@ -80,7 +80,7 @@ source "amazon-ebs" "source" {
   tags            = local.tags
   run_tags        = local.tags
   run_volume_tags = local.tags
-  
+
   assume_role {
     role_arn     = var.aws_role_arn
     session_name = var.aws_role_session_name

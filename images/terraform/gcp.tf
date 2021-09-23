@@ -24,4 +24,3 @@ resource "google_service_usage_consumer_quota_override" "override" {
   override_value = "1"
   force          = true
 }
-
