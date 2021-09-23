@@ -7,8 +7,8 @@ variables {
 variables {
   aws_role_session_name = "cml-packer-session"
   aws_role_arn          = "arn:aws:iam::260760892802:role/cml-packer"
-  aws_security_group_id = "sg-0b7df7d9f902ca7ec"
   aws_subnet_id         = "subnet-09fca08419c2f0575"
+  aws_security_group_id = "sg-0b7df7d9f902ca7ec"
 }
 
 locals {
@@ -61,7 +61,7 @@ data "amazon-ami" "ubuntu" {
 
 source "amazon-ebs" "source" {
   ami_groups      = ["all"]
-  ami_name        = var.test ? var.image_name : "${var.image_name}-test"
+  ami_name        = var.test ? "${var.image_name}-test" : var.image_name
   ami_description = var.image_description
   ami_regions     = var.test ? [local.aws_build_region] : local.release_regions
 

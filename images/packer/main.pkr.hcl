@@ -25,47 +25,31 @@ variables {
   image_description = "CML (Continuous Machine Learning) Ubuntu 18.04"
 }
 
-locals {
-  gcp_publish_script = <<-END
-    cat manifest.json | jq --raw-output '.builds | .[].artifact_id' | while read image; do
-      gcloud compute images add-iam-policy-binding "$image" \
-        --member='allAuthenticatedUsers' --role='roles/compute.imageUser'
-    done
-  END
-  gcp_delete_old_images_script = <<-END
-    for family in "${var.image_name}"{,-test}; do
-      gcloud compute images list --format=json --filter="family=$family" --sort-by=creationTimestamp |
-      jq --raw-output '.[:-1] | .[].name' |
-      while read image; do gcloud compute images delete "$image"; done
-    done
-  END
-}
-
 build {
   sources = [
     "source.amazon-ebs.source",
-    #"source.azure-arm.source",
-    #"sources.googlecompute.source"
+    "source.azure-arm.source",
+    "sources.googlecompute.source"
   ]
 
   provisioner "shell" {
    script = "${path.root}/../provisioner/setup.sh"
   }
 
-  #provisioner "ansible" {
-  #  playbook_file = "${path.root}/../ansible/playbook.yml"
-  #  galaxy_file   = "${path.root}/../ansible/requirements.yml"
-  #}
+  # provisioner "ansible" {
+  #   playbook_file = "${path.root}/../ansible/playbook.yml"
+  #   galaxy_file   = "${path.root}/../ansible/requirements.yml"
+  # }
 
   post-processor "manifest" {
     output = "manifest.json"
     strip_path = true
   }
 
-  #post-processor "shell-local" {
-  #  inline = [
-    #  local.gcp_publish_script,
-    #  local.gcp_delete_old_images_script
-  #  ]
-  #}
+  post-processor "shell-local" {
+    inline = [
+      var.gcp_post_processor,
+      var.azure_post_processor,
+    ]
+  }
 }

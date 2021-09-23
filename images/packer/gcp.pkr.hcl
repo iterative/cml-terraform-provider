@@ -10,6 +10,20 @@ variables {
   gcp_project = "cml-gcp-test"
 }
 
+variable "gcp_post_processor" {
+  value = <<-END
+    cat manifest.json | jq --raw-output '.builds | .[].artifact_id' | while read image; do
+      gcloud compute images add-iam-policy-binding "$image" \
+        --member='allAuthenticatedUsers' --role='roles/compute.imageUser'
+    done
+    for family in "${var.image_name}"{,-test}; do
+      gcloud compute images list --format=json --filter="family=$family" --sort-by=creationTimestamp |
+      jq --raw-output '.[:-1] | .[].name' |
+      while read image; do gcloud compute images delete "$image"; done
+    done
+  END
+}
+
 locals {
   tags = {
     environment = var.test ? "test" : "production"
@@ -18,7 +32,7 @@ locals {
 }
 
 source "googlecompute" "source" {
-  image_family            = var.test ? var.image_name : "${var.image_name}-test"
+  image_family            = var.test ? "${var.image_name}-test" : var.image_name
   image_name              = "${var.image_name}-{{timestamp}}"
   image_description       = var.image_description
   image_storage_locations = local.release_regions

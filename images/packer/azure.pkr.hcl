@@ -17,7 +17,7 @@ variables {
 }
 
 locals {
-  image_name = var.test ? var.image_name : "${var.image_name}-test"
+  image_name = var.test ? "${var.image_name}-test" : var.image_name
 }
 
 locals {
