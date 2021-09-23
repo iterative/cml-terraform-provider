@@ -1,0 +1,10 @@
+---
+roles:
+  - name: nvidia.nvidia_docker
+    version: v1.2.3
+  - name: nvidia.nvidia_driver
+    version: v2.0.1
+collections:
+  - name: ansible.posix
+    version: 1.3.0
+    source: https://galaxy.ansible.com

@@ -36,7 +36,6 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
-terraform
 
 # Ignore the Go vendor directory, superseded by proxy.golang.org and go.{mod,sum}
 vendor

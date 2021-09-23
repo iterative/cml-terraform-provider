@@ -395,7 +395,7 @@ func provisionerCode(d *schema.ResourceData) (string, error) {
 		return code, err
 	}
 
-	setup, err := Asset("../cml/setup.sh")
+	setup, err := Asset("images/provisioner/setup.sh")
 	if err != nil {
 		return code, err
 	}

@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:    
+      - master
+    paths:
+      - images
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - uses: azure/login@v1.1
+        with:
+          creds: ${{ toJSON({"clientId": secrets.AZURE_CLIENT_ID, "clientSecret": secrets.AZURE_CLIENT_SECRET, "subscriptionId": secrets.AZURE_SUBSCRIPTION_ID}) }}
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      - run: |
+          pip install ansible
+          packer build -force images/packer

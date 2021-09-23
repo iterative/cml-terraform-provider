@@ -1,0 +1,109 @@
+---
+- name: Provision virtual machine image
+  hosts: default
+  become: true
+  tasks:
+    - name: Update APT packages
+      become: true
+      apt:
+        update_cache: yes
+
+    - name: Uninstall the unattended-upgrades package
+      apt:
+        name: unattended-upgrades
+        state: absent
+
+    - name: Disable daily upgrade service
+      service:
+        name: apt-daily-upgrade
+        enabled: no
+        state: stopped
+
+    - name: Install build-essential
+      apt:
+        name: build-essential
+        state: present
+
+    - name: Add Git core PPA
+      apt_repository:
+        repo: "ppa:git-core/ppa"
+
+    - name: Install Git
+      apt:
+        name: git
+        state: present
+
+    - name: Add Node JS repository key
+      apt_key:
+        url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+        state: present
+
+    - name: Add Node JS repository
+      apt_repository:
+        repo: deb https://deb.nodesource.com/node_12.x {{ ansible_distribution_release }} main
+        update_cache: yes
+
+    - name: Install Node JS
+      apt:
+        name: nodejs
+        state: present
+
+    - name: Add Docker repository key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+
+    - name: Add Hashicorp repository key
+      apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+        state: present
+
+    - name: Add Hashicorp repository
+      apt_repository:
+        repo: deb https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main
+        update_cache: yes
+
+    - name: Install Hashicorp Terraform
+      apt:
+        name: terraform
+        state: present
+
+    - name: Add the ubuntu user to the docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Allow the ubuntu user to access docker.sock
+      ansible.posix.acl:
+        path: /var/run/docker.sock
+        entry: user:ubuntu:rw
+        state: present
+
+    - name: Install the NVIDIA drivers
+      include_role:
+        name: nvidia.nvidia_driver
+        vars:
+          nvidia_driver_skip_reboot: true
+
+    - name: Install the NVIDIA Docker runtime
+      include_role:
+        name: nvidia.nvidia_docker
+
+    - name: Create the completion flag
+      copy:
+        content: OK
+        dest: /var/log/cml_stack.log
