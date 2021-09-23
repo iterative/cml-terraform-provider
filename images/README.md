@@ -12,5 +12,3 @@ https://github.com/hashicorp/packer/issues/9647
 ## Google Cloud
 
 https://cloud.google.com/compute/docs/images/managing-access-custom-images#share-images-publicly
-
-
