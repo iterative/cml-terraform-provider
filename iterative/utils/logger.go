@@ -83,6 +83,9 @@ func formatSchemaStatus(d *schema.ResourceData) string {
 	if status["failed"] != nil && status["failed"].(int) > 0 {
 		message = fmt.Sprintf("\x1b[%dmStatus: completed with errors \x1b[1m•\x1b[0m", colors["ERROR"])
 	}
+	if status["timeout"] != nil && status["timeout"].(int) > 0 {
+		message = fmt.Sprintf("\x1b[%dmStatus: stopped via timeout \x1b[1m•\x1b[0m", colors["WARNING"])
+	}
 	if status["running"] != nil && status["running"].(int) >= d.Get("parallelism").(int) {
 		message = fmt.Sprintf("\x1b[%dmStatus: running \x1b[1m•\x1b[0m", colors["WARNING"])
 	}

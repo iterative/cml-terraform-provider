@@ -29,6 +29,7 @@ const (
 	StatusCodeActive    StatusCode = "running"
 	StatusCodeSucceeded StatusCode = "succeeded"
 	StatusCodeFailed    StatusCode = "failed"
+	StatusCodeTimeout   StatusCode = "timeout"
 )
 
 type Size struct {

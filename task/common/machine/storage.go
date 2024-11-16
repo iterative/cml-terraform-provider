@@ -26,8 +26,8 @@ import (
 	"github.com/rclone/rclone/fs/operations"
 	"github.com/rclone/rclone/fs/sync"
 
-	"github.com/sirupsen/logrus"
 	"github.com/0x2b3bfa0/logrusctx"
+	"github.com/sirupsen/logrus"
 
 	"terraform-provider-iterative/task/common"
 )
@@ -114,7 +114,7 @@ func Status(ctx context.Context, remote string, initialStatus common.Status) (co
 				initialStatus[common.StatusCodeFailed] += 1
 			}
 		} else if statusReport.Result == "timeout" {
-			initialStatus[common.StatusCodeFailed] += 1
+			initialStatus[common.StatusCodeTimeout] += 1
 		}
 	}
 	return initialStatus, nil

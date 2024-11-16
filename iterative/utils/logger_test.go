@@ -52,6 +52,21 @@ func TestState3(t *testing.T) {
 	logger.Info("status")
 }
 
+func TestState4(t *testing.T) {
+	d := generateSchemaData(t, map[string]interface{}{
+		"name":        "mytask",
+		"parallelism": "1",
+		"status": map[string]interface{}{
+			"running": 0,
+			"timeout": 1,
+		},
+	})
+
+	logger := logrus.WithFields(logrus.Fields{"d": d})
+	logrus.SetFormatter(&TpiFormatter{})
+	logger.Info("status")
+}
+
 func TestLogs(t *testing.T) {
 	logs := make([]interface{}, 0)
 	logs = append(logs, "-- Logs begin at Tue 2022-03-01 12:25:09 UTC, end at Tue 2022-03-01 12:30:30 UTC. --\nMar 01 12:25:50 tpi000000 systemd[1]: Started tpi-task.service.\nMar 01 12:25:50 tpi000000 sudo[1706]:     root : TTY=unknown ; PWD=/tmp/tpi-task ; USER=root ; COMMAND=/usr/bin/apt update\nMar 01 12:25:50 tpi000000 sudo[1706]: pam_unix(sudo:session): session opened for user root by (uid=0)\nMar 01 12:25:50 tpi000000 tpi-task[1711]: WARNING: apt does not have a stable CLI interface. Use with caution in scripts.\nMar 01 12:25:50 tpi000000 tpi-task[1711]: Hit:1 http://azure.archive.ubuntu.com/ubuntu focal InRelease\nMar 01 12:25:50 tpi000000 tpi-task[1711]: Get:2 http://azure.archive.ubuntu.com/ubuntu focal-updates InRelease [114 kB]\nMar 01 12:25:50 tpi000000 tpi-task[1711]: Get:3 http://azure.archive.ubuntu.com/ubuntu focal-backports InRelease [108 kB]\nMar 01 12:25:51 tpi000000 tpi-task[1711]: Get:4 http://security.ubuntu.com/ubuntu focal-security InRelease [114 kB]\nMar 01 12:25:51 tpi000000 tpi-task[1711]: Get:5 http://azure.archive.ubuntu.com/ubuntu focal/universe amd64 Packages [8628 kB]\n")
